@@ -20,7 +20,7 @@ def search_bing_videos(query_string, orientation_landscape=True):
   # Bing Search API endpoint (replace with your specific endpoint for video search)
   url = "https://api.bing.microsoft.com/v7.0/Videos/Search"
   headers = {
-      "Authorization": f"Bearer {BING_SEARCH_API_KEY}",  # Use your Bing Search API key
+      "Authorization": f"Bearer {f8506261aced45408a85a54ca83fa54b}",  # Use your Bing Search API key
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
   }
   params = {
