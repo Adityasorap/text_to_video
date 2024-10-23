@@ -19,7 +19,7 @@ def log_response(log_type, query_string, json_data):
     log_type_upper = log_type.upper()  # Convert log type to uppercase for consistent access
     log_directory = eval(f"DIRECTORY_LOG_{log_type_upper}")  # Use upper case for eval
     filepath = os.path.join(log_directory, filename)
-    }
+    
 
     # Create directory if it doesn't exist
     if log_type == LOG_TYPE_GPT:
