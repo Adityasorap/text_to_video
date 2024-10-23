@@ -9,7 +9,7 @@ LOG_TYPE_BING_VIDEO = 'bing_video'
 
 # Log directory paths
 DIRECTORY_LOG_GPT = ".logs/gpt_logs"
-DIRECTORY_LOG_BING_VIDEO = ".logs/bing_video_logs"  # New directory
+DIRECTORY_LOG_BING = '/path/to/your/logs/bing' # New directory
 
 # Method to log response
 def log_response(log_type, query, response):
