@@ -68,22 +68,21 @@ def getBestVideo(query_string, orientation_landscape=True, used_vids=[]):
     for video in sorted_videos:
         for video_file in video.get('video_files', []):
             if orientation_landscape:
-                if video_file.get('width', 0) == 1920 and video_file.get
+                if video_file.get('width', 0) == 1920 and video_file.get:
 
-def generate_video_url(timed_video_searches,video_server):
-        timed_video_urls = []
-        if video_server == "pexel":
-            used_links = []
-            for (t1, t2), search_terms in timed_video_searches:
-                url = ""
-                for query in search_terms:
-                  
-                    url = getBestVideo(query, orientation_landscape=True, used_vids=used_links)
-                    if url:
-                        used_links.append(url.split('.hd')[0])
-                        break
-                timed_video_urls.append([[t1, t2], url])
-        elif video_server == "stable_diffusion":
-            timed_video_urls = get_images_for_video(timed_video_searches)
+def generate_video_url(timed_video_searches, video_server):
+    timed_video_urls = []
+    if video_server == "bing":  # Replace "pexel" with "bing"
+        used_links = []
+        for (t1, t2), search_terms in timed_video_searches:
+            url = ""
+            for query in search_terms:
+                url = getBestVideo(query, orientation_landscape=True, used_vids=used_links)  # Replace "getBestVideo" with appropriate Bing function
+                if url:
+                    used_links.append(url.split('.hd')[0])
+                    break
+            timed_video_urls.append([[t1, t2], url])
+    elif video_server == "stable_diffusion":
+        timed_video_urls = get_images_for_video(timed_video_searches)
 
-        return timed_video_urls
+    return timed_video_urls
