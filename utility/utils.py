@@ -5,7 +5,6 @@ import json
 # Log types (modify as needed)
 LOG_TYPE_GPT = "GPT"
 LOG_TYPE_BING = 'bing'  
-LOG_TYPE_BING_VIDEO = 'bing_video'
 
 
   # Adjust the path as needed
@@ -25,7 +24,7 @@ def log_response(log_type, query, response):
     if log_type == LOG_TYPE_GPT:
         if not os.path.exists(DIRECTORY_LOG_GPT):
             os.makedirs(DIRECTORY_LOG_GPT)
-    elif log_type == LOG_TYPE_BING_VIDEO:
+    elif log_type == LOG_TYPE_BING:
         if not os.path.exists(DIRECTORY_LOG_BING):
             os.makedirs(DIRECTORY_LOG_BING)
     else:
