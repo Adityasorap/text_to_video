@@ -8,8 +8,7 @@ LOG_TYPE_BING = 'bing'
 LOG_TYPE_BING_VIDEO = 'bing_video'
 
 
-
-DIRECTORY_LOG_PEXEL = '/path/to/your/logs/pexel'  # Adjust the path as needed
+  # Adjust the path as needed
 DIRECTORY_LOG_BING = '/path/to/your/logs/bing'    # Add this line with the correct path
 DIRECTORY_LOG_GPT = '/path/to/your/logs/gpt'      # Adjust if necessary
 
@@ -27,8 +26,8 @@ def log_response(log_type, query, response):
         if not os.path.exists(DIRECTORY_LOG_GPT):
             os.makedirs(DIRECTORY_LOG_GPT)
     elif log_type == LOG_TYPE_BING_VIDEO:
-        if not os.path.exists(DIRECTORY_LOG_BING_VIDEO):
-            os.makedirs(DIRECTORY_LOG_BING_VIDEO)
+        if not os.path.exists(DIRECTORY_LOG_BING):
+            os.makedirs(DIRECTORY_LOG_BING)
     else:
         # Handle other potential log types
         pass
