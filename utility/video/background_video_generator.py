@@ -1,83 +1,57 @@
 import os
 import requests
-from utility.utils import log_response, LOG_TYPE_PEXEL  # Assuming this import is for logging
+from utility.utils import log_response, LOG_TYPE_BING
 
-# Placeholder for potential Bing API key retrieval (replace with actual implementation)
-BING_VIDEO_SEARCH_KEY = os.environ.get('BING_VIDEO_SEARCH_KEY')
+BING_API_KEY = os.environ.get('BING_KEY')
 
 def search_videos(query_string, orientation_landscape=True):
-    """Searches for videos using the Bing Video Search API (replace with actual API call).
-
-    Args:
-        query_string (str): The search query.
-        orientation_landscape (bool, optional): Whether to search for landscape videos. Defaults to True.
-
-    Returns:
-        dict: The JSON response from the Bing Video Search API (structure may differ).
-    """
-
-    # Replace with Bing Video Search API endpoint and parameters (consider using query parameters)
-    url = "https://<BING_VIDEO_SEARCH_API_ENDPOINT>"  # Replace with actual Bing Video Search API endpoint
+    url = "https://api.bing.microsoft.com/v7.0/videos/search"
     headers = {
-        "Ocp-Apim-Subscription-Key": BING_VIDEO_SEARCH_KEY  # Replace with Bing API key header name
+        "Ocp-Apim-Subscription-Key": BING_API_KEY,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
     params = {
-        "q": query_string,  # Replace with Bing API query parameter name
-        "count": 15  # Consider using an appropriate parameter to limit results (if supported)
+        "q": query_string,
+        "count": 15,
+        "mkt": "en-US"
     }
-    # Additional parameters for orientation, resolution, etc. may be available depending on Bing's API
 
     response = requests.get(url, headers=headers, params=params)
     json_data = response.json()
-    log_response(LOG_TYPE_PEXEL, query_string, response.json())  # Assuming logging functionality
+    log_response(LOG_TYPE_BING, query_string, json_data)
 
     return json_data
 
-
 def getBestVideo(query_string, orientation_landscape=True, used_vids=[]):
-    """Finds the best video from the search results (adapt based on Bing API response structure).
-
-    Args:
-        query_string (str): The search query.
-        orientation_landscape (bool, optional): Whether to search for landscape videos. Defaults to True.
-        used_vids (list, optional): A list of already used video links to avoid duplicates. Defaults to [].
-
-    Returns:
-        str: The URL of the best video, or None if no suitable video is found.
-    """
-
     vids = search_videos(query_string, orientation_landscape)
-    videos = vids.get('videos', [])  # Replace with Bing API response structure to extract video data
+    videos = vids.get('value', [])  # Extract the videos list from JSON
 
-    # Adapt filtering based on Bing API response structure and video properties
-    filtered_videos = []
-    for video in videos:
-        if orientation_landscape:
-            # Check for properties like width, height, or aspect ratio (adapt based on Bing's API)
-            if video.get('width', 0) >= 1920 and video.get('height', 0) >= 1080 and video.get('aspect_ratio', 0) == 16/9:
-                filtered_videos.append(video)
-        else:
-            # Check for properties like width, height, or aspect ratio (adapt based on Bing's API)
-            if video.get('width', 0) >= 1080 and video.get('height', 0) >= 1920 and video.get('aspect_ratio', 0) == 9/16:
-                filtered_videos.append(video)
+    # Filter based on orientation
+    if orientation_landscape:
+        filtered_videos = [video for video in videos if video['width'] >= 1920 and video['height'] >= 1080 and video['width'] / video['height'] == 16 / 9]
+    else:
+        filtered_videos = [video for video in videos if video['width'] >= 1080 and video['height'] >= 1920 and video['height'] / video['width'] == 16 / 9]
 
-    # Adapt sorting based on Bing API response structure (if duration is available)
-    sorted_videos = sorted(filtered_videos, key=lambda x: abs(15 - int(x.get('duration', 0))), reverse=True)  # Assuming duration is available
+    # Sort the filtered videos by duration if available
+    sorted_videos = sorted(filtered_videos, key=lambda x: abs(15 - x.get('duration', 0)))
 
-    # Adapt extracting video URLs and checking duplicates based on Bing API response structure
+    # Extract the top video URL
     for video in sorted_videos:
-        for video_file in video.get('video_files', []):
-            if orientation_landscape:
-                if video_file.get('width', 0) == 1920 and video_file.get:
+        video_link = video.get('contentUrl')
+        if video_link and not (video_link.split('.hd')[0] in used_vids):
+            return video_link
+
+    print("NO LINKS found for this round of search with query :", query_string)
+    return None
 
 def generate_video_url(timed_video_searches, video_server):
     timed_video_urls = []
-    if video_server == "bing":  # Replace "pexel" with "bing"
+    if video_server == "bing":
         used_links = []
         for (t1, t2), search_terms in timed_video_searches:
             url = ""
             for query in search_terms:
-                url = getBestVideo(query, orientation_landscape=True, used_vids=used_links)  # Replace "getBestVideo" with appropriate Bing function
+                url = getBestVideo(query, orientation_landscape=True, used_vids=used_links)
                 if url:
                     used_links.append(url.split('.hd')[0])
                     break
