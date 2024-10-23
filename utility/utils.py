@@ -4,7 +4,7 @@ import json
 
 # Log types (modify as needed)
 LOG_TYPE_GPT = "GPT"
-LOG_TYPE_BING_VIDEO = "BING_VIDEO"  # New log type for Bing Video
+LOG_TYPE_BING = 'bing'  
 
 # Log directory paths
 DIRECTORY_LOG_GPT = ".logs/gpt_logs"
