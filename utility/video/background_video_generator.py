@@ -1,6 +1,8 @@
 import os
 import requests
 from utility.utils import log_response, LOG_TYPE_BING
+from utility.utils import log_response, LOG_TYPE_BING_VIDEO
+
 
 BING_API_KEY = os.environ.get('BING_KEY')
 
