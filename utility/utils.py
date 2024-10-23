@@ -14,11 +14,11 @@ DIRECTORY_LOG_GPT = '/path/to/your/logs/gpt'      # Adjust if necessary
 
 
 # Method to log response
-def log_response(log_type, query, response):
-    log_entry = {
-        "query": query,
-        "response": response,
-        "timestamp": datetime.now().isoformat()
+def log_response(log_type, query_string, json_data):
+    filename = f"{query_string.replace(' ', '_')}.log"
+    log_type_upper = log_type.upper()  # Convert log type to uppercase for consistent access
+    log_directory = eval(f"DIRECTORY_LOG_{log_type_upper}")  # Use upper case for eval
+    filepath = os.path.join(log_directory, filename)
     }
 
     # Create directory if it doesn't exist
