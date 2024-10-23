@@ -1,35 +1,48 @@
-from serpapi import GoogleSearch
-def generate_video_url(search_terms, VIDEO_SERVER="serpapi"):
-  """
-  Fetches background video URLs using SerpApi for each search term.
+from openai import OpenAI
+import os
+import edge_tts
+import json
+import asyncio
+import whisper_timestamped as whisper
+from utility.script.script_generator import generate_script
+from utility.audio.audio_generator import generate_audio
+from utility.captions.timed_captions_generator import generate_timed_captions
+from utility.video.background_video_generator import generate_video_url  # Modified import
+from utility.render.render_engine import get_output_media
+from utility.video.video_search_query_generator import getVideoSearchQueriesTimed, merge_empty_intervals
+import argparse
 
-  Args:
-      search_terms (list): List of timed search queries with (start_time, end_time, query) tuples.
-      VIDEO_SERVER (str, optional): Video search engine (default: "serpapi").
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate a video from a topic.")
+    parser.add_argument("topic", type=str, help="The topic for the video")
 
-  Returns:
-      list: List of timed video URLs (or None if no video found).
-  """
+    args = parser.parse_args()
+    SAMPLE_TOPIC = args.topic
+    SAMPLE_FILE_NAME = "audio_tts.wav"
+    VIDEO_SERVER = "bing"  # Modified variable
 
-  if VIDEO_SERVER != "serpapi":
-      raise NotImplementedError(f"Unsupported video server: {VIDEO_SERVER}")
+    response = generate_script(SAMPLE_TOPIC)
+    print("script: {}".format(response))
 
-  background_video_urls = []
-  for start_time, end_time, query in search_terms:
-    # Use SerpApi to search for videos related to the query
-    search = GoogleSearch({
-      "q": query,
-      "tbm": "vid",  # Specify video search
-      "api_key": "<5c6d98019f9e9fc8dc61b7a122c643e8952910a85011faec02c8326b8f891f66>"  # Replace with your SerpApi key
-    })
+    asyncio.run(generate_audio(response, SAMPLE_FILE_NAME))
 
-    results = search.get_dict()
+    timed_captions = generate_timed_captions(SAMPLE_FILE_NAME)
+    print(timed_captions)
 
-    # Extract the first video URL from search results
-    if results.get("video_results"):
-      video_url = results["video_results"][0]["link"]
-      background_video_urls.append((start_time, end_time, video_url))
+    search_terms = getVideoSearchQueriesTimed(response, timed_captions)
+    print(search_terms)
+
+    background_video_urls = None
+    if search_terms is not None:
+        background_video_urls = generate_video_url(search_terms, VIDEO_SERVER)  # Modified function call
+        print(background_video_urls)
     else:
-      background_video_urls.append((start_time, end_time, None))  # No video found
+        print("No background video")
 
-  return background_video_urls
+    background_video_urls = merge_empty_intervals(background_video_urls)
+
+    if background_video_urls is not None:
+        video = get_output_media(SAMPLE_FILE_NAME, timed_captions, background_video_urls, VIDEO_SERVER)
+        print(video)
+    else:
+        print("No video")
