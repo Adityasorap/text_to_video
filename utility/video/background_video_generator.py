@@ -69,6 +69,7 @@ def getBestVideo(query_string, orientation_landscape=True, used_vids=[]):
         for video_file in video.get('video_files', []):
             if orientation_landscape:
                 if video_file.get('width', 0) == 1920 and video_file.get
+
 def generate_video_url(timed_video_searches,video_server):
         timed_video_urls = []
         if video_server == "pexel":
