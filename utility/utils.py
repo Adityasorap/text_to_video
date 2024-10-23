@@ -8,8 +8,11 @@ LOG_TYPE_BING = 'bing'
 LOG_TYPE_BING_VIDEO = 'bing_video'
 
 # Log directory paths
-DIRECTORY_LOG_GPT = ".logs/gpt_logs"
-DIRECTORY_LOG_BING = '/path/to/your/logs/bing' # New directory
+LOG_DIRECTORY_MAP = {
+    'bing': DIRECTORY_LOG_BING,
+    'gpt': DIRECTORY_LOG_GPT,
+    # Add other log types if needed
+} # New directory
 
 # Method to log response
 def log_response(log_type, query, response):
