@@ -7,7 +7,7 @@ BING_API_KEY = os.environ.get('BING_KEY')
 def search_videos(query_string):
     url = "https://api.bing.microsoft.com/v7.0/videos/search"
     headers = {
-        "Ocp-Apim-Subscription-Key": BING_API_KEY,
+        "Authorization": BING_API_KEY,
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
     params = {
