@@ -18,24 +18,25 @@ def search_videos(query_string, orientation_landscape=True):
 
     response = requests.get(url, headers=headers, params=params)
     json_data = response.json()
-    log_response(LOG_TYPE_BING,query_string,response.json())
-   
-    return json_data
+    log_response(LOG_TYPE_BING, query_string, json_data)
 
+    return json_data
 
 def getBestVideo(query_string, orientation_landscape=True, used_vids=[]):
     vids = search_videos(query_string, orientation_landscape)
-    videos = vids.get('value', [])
-    
-    if not videos:
-        print("No videos found for the query:", query_string)
-        return None
+    videos = vids.get('value', [])  # Extract the videos list from JSON
 
     # Filter based on orientation
     if orientation_landscape:
-        filtered_videos = [video for video in videos if video['width'] >= 1920 and video['height'] >= 1080 and video['width'] / video['height'] == 16 / 9]
+        filtered_videos = [
+            video for video in videos
+            if video['width'] >= 1920 and video['height'] >= 1080 and video['width'] / video['height'] == 16 / 9
+        ]
     else:
-        filtered_videos = [video for video in videos if video['width'] >= 1080 and video['height'] >= 1920 and video['height'] / video['width'] == 16 / 9]
+        filtered_videos = [
+            video for video in videos
+            if video['width'] >= 1080 and video['height'] >= 1920 and video['height'] / video['width'] == 16 / 9
+        ]
 
     # Sort the filtered videos by duration if available
     sorted_videos = sorted(filtered_videos, key=lambda x: abs(15 - x.get('duration', 0)))
@@ -54,7 +55,7 @@ def generate_video_url(timed_video_searches, video_server):
     if video_server == "bing":
         used_links = []
         for (t1, t2), search_terms in timed_video_searches:
-            url = None
+            url = ""
             for query in search_terms:
                 url = getBestVideo(query, orientation_landscape=True, used_vids=used_links)
                 if url:
@@ -65,4 +66,5 @@ def generate_video_url(timed_video_searches, video_server):
         timed_video_urls = get_images_for_video(timed_video_searches)
 
     return timed_video_urls
+
 
