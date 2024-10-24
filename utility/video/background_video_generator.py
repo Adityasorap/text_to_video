@@ -1,6 +1,6 @@
 import os
 import requests
-from utility.utils import log_response, LOG_TYPE_BING, LOG_TYPE_BING_VIDEO
+from utility.utils import log_response, LOG_TYPE_BING
 
 BING_API_KEY = os.environ.get('BING_KEY')
 
@@ -17,13 +17,11 @@ def search_videos(query_string, orientation_landscape=True):
     }
 
     response = requests.get(url, headers=headers, params=params)
-    if response.status_code != 200:
-        print(f"Error fetching videos: {response.status_code} - {response.text}")
-        return {}
-
     json_data = response.json()
-    log_response(LOG_TYPE_BING, query_string, json_data)
+    log_response(LOG_TYPE_BING,query_string,response.json())
+   
     return json_data
+
 
 def getBestVideo(query_string, orientation_landscape=True, used_vids=[]):
     vids = search_videos(query_string, orientation_landscape)
