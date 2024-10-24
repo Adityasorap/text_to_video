@@ -1,3 +1,33 @@
+import os
+import requests
+import json  # Make sure to import json
+import re
+from utility.utils import log_response, LOG_TYPE_GPT
+
+# Client Initialization
+if len(os.environ.get("GROQ_API_KEY", "")) > 30:
+    from groq import Groq
+    model = "llama3-70b-8192"
+    client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+else:
+    model = "gpt-4o"
+    OPENAI_API_KEY = os.environ.get('OPENAI_KEY')
+    from openai import OpenAI
+    client = OpenAI(api_key=OPENAI_API_KEY)
+
+# Define the prompt used for OpenAI
+prompt = """# Instructions
+Given the following video script and timed captions, extract three visually concrete and specific keywords...
+"""  # Make sure to fill in the complete prompt as needed
+
+# Function to fix JSON formatting
+def fix_json(json_str):
+    # Replace typographical apostrophes with straight quotes
+    json_str = json_str.replace("’", "'")
+    # Replace any incorrect quotes (e.g., mixed single and double quotes)
+    json_str = json_str.replace("“", "\"").replace("”", "\"").replace("‘", "\"").replace("’", "\"")
+    return json_str
+
 def getVideoSearchQueriesTimed(script, captions_timed):
     end = captions_timed[-1][0][1]
     out = [[[0, 0], ""]]
@@ -70,3 +100,4 @@ def merge_empty_intervals(segments):
             i += 1
     
     return merged
+
